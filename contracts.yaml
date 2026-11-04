@@ -1,0 +1,65 @@
+customer.profile:
+  owner: Customer
+  version: "2.1.0"
+  key: customer_id
+  classification: confidential
+  residency_field: jurisdiction
+  freshness_hours: 24
+  schema:
+    customer_id: {type: str, required: true, pattern: "^C[0-9]{6}$"}
+    national_id_hash: {type: str, required: true, pii: true}
+    jurisdiction: {type: str, required: true, allowed: [US, EU, IN]}
+    credit_tier: {type: str, required: true, allowed: [A, B, C, D]}
+  quality: {completeness_min: 0.99, uniqueness: [customer_id]}
+
+lending.loan:
+  owner: Lending
+  version: "3.0.0"
+  key: loan_id
+  classification: confidential
+  freshness_hours: 24
+  depends_on: {customer.profile: "^2"}
+  schema:
+    loan_id: {type: str, required: true, pattern: "^L[0-9]{7}$"}
+    customer_id: {type: str, required: true, fk: customer.profile.customer_id}
+    principal: {type: float, required: true, min: 1000, max: 5000000}
+    rate_pct: {type: float, required: true, min: 0, max: 25}
+    collateral_id: {type: str, required: true, fk: collateral.valuation.collateral_id}
+  quality: {completeness_min: 0.99, uniqueness: [loan_id]}
+
+payments.event:
+  owner: Payments
+  version: "1.4.0"
+  key: payment_id
+  classification: internal
+  freshness_hours: 1
+  schema:
+    payment_id: {type: str, required: true}
+    loan_id: {type: str, required: true, fk: lending.loan.loan_id}
+    amount: {type: float, required: true, min: 0.01}
+    currency: {type: str, required: true, allowed: [USD, EUR, INR]}
+    status: {type: str, required: true, allowed: [SETTLED, LATE, MISSED]}
+  quality: {completeness_min: 0.995, uniqueness: [payment_id]}
+
+risk.score:
+  owner: Risk
+  version: "1.2.0"
+  key: customer_id
+  classification: confidential
+  freshness_hours: 24
+  depends_on: {customer.profile: "^2"}
+  schema:
+    customer_id: {type: str, required: true, fk: customer.profile.customer_id}
+    pd_12m: {type: float, required: true, min: 0, max: 1}
+  quality: {completeness_min: 0.99, uniqueness: [customer_id]}
+
+collateral.valuation:
+  owner: Collateral
+  version: "1.0.0"
+  key: collateral_id
+  classification: internal
+  freshness_hours: 720
+  schema:
+    collateral_id: {type: str, required: true}
+    appraised_value: {type: float, required: true, min: 10000}
+  quality: {completeness_min: 0.99, uniqueness: [collateral_id]}

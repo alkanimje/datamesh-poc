@@ -1,0 +1,40 @@
+{
+  "seeds": 10,
+  "clean_false_positive_rate": 0.0,
+  "contract_detection_rate": 1.0,
+  "baseline_detection_rate": 0.125,
+  "per_fault_contract": {
+    "duplicate_key": 1.0,
+    "enum_violation": 1.0,
+    "null_required": 1.0,
+    "orphan_fk": 1.0,
+    "pattern_violation": 1.0,
+    "range_violation": 1.0,
+    "schema_drop": 1.0,
+    "type_drift": 1.0
+  },
+  "per_fault_baseline": {
+    "duplicate_key": 0.0,
+    "enum_violation": 0.0,
+    "null_required": 0.0,
+    "orphan_fk": 0.0,
+    "pattern_violation": 0.0,
+    "range_violation": 0.0,
+    "schema_drop": 1.0,
+    "type_drift": 0.0
+  },
+  "policy_requests": 20000,
+  "policy_agreement": 1.0,
+  "policy_decision_mix": {
+    "allow": 0.499,
+    "deny": 0.333,
+    "mask": 0.168
+  },
+  "policy_traceability": 1.0,
+  "naive_missing_identity_rows_mean": 240.0,
+  "mesh_missing_identity_rows_mean": 0.0,
+  "version_conflict_blocked_rate": 1.0,
+  "naive_version_conflict_blocked_rate": 0.0,
+  "lineage_complete_rate": 1.0,
+  "validation_ms_per_100k_rows": 68.73771499996906
+}
